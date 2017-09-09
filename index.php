@@ -1,10 +1,17 @@
 <?php
 
+// 指定した月のカレンダーを表示する
+//URLにtを渡して渡した値のカレンダーが表示されるようにする
+$t = '2015-09'; // パラメータをセット。サイト上で/?t=2015-09とする
+$thisMonth = new DateTime($t);// パラメータから日付オブジェクトを作成する
+$yearMonth = $thisMonth->format('F Y');// オブジェクトからフォーマットを指定した値を$yearMonthにセットする。F(年)Y(月)ここでは2015 09が渡されている
+
+
 $body = '';
 $period = new DatePeriod( // DatePeriod:特定の期間の日付オブジェクトを作成するクラス
-  new DateTime('first day of this month'),//第一引数は最初の日の DateTime オブジェクト。DateTime() に文字列で「first day of this month」と書けば柔軟に最初の日と解釈してくれる
+  new DateTime('first day of '. $yearMonth),//第一引数は最初の日の DateTime オブジェクト。DateTime() に文字列で「first day of this month」と書けば柔軟に最初の日と解釈してくれる
   new DateInterval('P1D'),//第二引数はどのくらい間隔をあけて日付を作成するか。DateIntarval というにクラスがあるので、そちらに (P1D)1 日ごとという風に書く
-  new DateTime('first day of next month')//第三引数は期間の終わりを指定。指定した日は含まないので「first day of next month」と書けば翌月の1日の前日（今月の末）とかける。
+  new DateTime('first day of '. $yearMonth . ' +1 month')//第三引数は期間の終わりを指定。指定した日は含まないので「first day of next month」と書けば翌月の1日の前日（今月の末）とかける。
 );
 
 foreach ($period as $day) {
@@ -12,20 +19,20 @@ foreach ($period as $day) {
   $body .= sprintf('<td class="youbi_%d">%d</td>' ,$day->format('w'), $day->format('d'));//sprintf()書式付きで文字列を作成する命令。format():DateTimeオブジェクトを好きな書式で表示する。書式の種類は公式参照「date」で検索で出る
 }
 
-//翌月の日にちを作成。翌月の1日の曜日を探して土曜日まで埋める
-$head = '';
-$firstDayOfNextMonth = new DateTime('first day of next month');//翌月の1日のオブジェクトを作成
-while ($firstDayOfNextMonth->format('w') > 0){//翌月の1日の曜日を調べて日曜日まで繰り返し
-  $head .= sprintf('<td class="gray">%d</td>', $firstDayOfNextMonth->format('d'));//headの後に連結+=みたなもの
-  $firstDayOfNextMonth->add(new DateInterval('P1D'));//add()を使用して日にちを1日進める
-}
-
 //先月の残りを作成。先月の末日の曜日を探して日曜まで埋めていく
 $tail = '';
-$lastDayOfNextMonth = new DateTime('last day of previous month');//先月の末日のオブジェクトを作成
+$lastDayOfNextMonth = new DateTime('last day of ' . $yearMonth . '-1 month');//先月の末日のオブジェクトを作成
 while ($lastDayOfNextMonth->format('w') < 6){//先月の末日の曜日を調べて土曜日まで繰り返し
   $tail = sprintf('<td class="gray">%d</td>', $lastDayOfNextMonth->format('d')) . $tail; //tailの前部分に連結
   $lastDayOfNextMonth->sub(new DateInterval('P1D'));//add()を使用して日にちを1日進める
+}
+
+//翌月の日にちを作成。翌月の1日の曜日を探して土曜日まで埋める
+$head = '';
+$firstDayOfNextMonth = new DateTime('first day of ' . $yearMonth . '+1 month');//翌月の1日のオブジェクトを作成
+while ($firstDayOfNextMonth->format('w') > 0){//翌月の1日の曜日を調べて日曜日まで繰り返し
+  $head .= sprintf('<td class="gray">%d</td>', $firstDayOfNextMonth->format('d'));//headの後に連結+=みたなもの
+  $firstDayOfNextMonth->add(new DateInterval('P1D'));//add()を使用して日にちを1日進める
 }
 
 $html = '<tr>' . $tail . $body . $head . '</tr>';
@@ -44,7 +51,7 @@ $html = '<tr>' . $tail . $body . $head . '</tr>';
     <thead>
       <tr>
         <th><a href="">&laquo;</a></th>
-        <th colspan="5">August 2015</th>
+        <th colspan="5"><?php echo $yearMonth; ?></th>
         <th><a href="">&raquo;</a></th>
       </tr>
     </thead>
