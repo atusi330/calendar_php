@@ -2,16 +2,16 @@
 
 // 指定した月のカレンダーを表示する
 //URLにtを渡して渡した値のカレンダーが表示されるようにする
-$t = '2015-09'; // パラメータをセット。サイト上で/?t=2015-09とする
+$t = '2015-09'; // パラメータをセット。サイト上で/?t=2015-09とすると表示される
 $thisMonth = new DateTime($t);// パラメータから日付オブジェクトを作成する
 $yearMonth = $thisMonth->format('F Y');// オブジェクトからフォーマットを指定した値を$yearMonthにセットする。F(年)Y(月)ここでは2015 09が渡されている
 
 
 $body = '';
 $period = new DatePeriod( // DatePeriod:特定の期間の日付オブジェクトを作成するクラス
-  new DateTime('first day of '. $yearMonth),//第一引数は最初の日の DateTime オブジェクト。DateTime() に文字列で「first day of this month」と書けば柔軟に最初の日と解釈してくれる
+  new DateTime('first day of '. $yearMonth),//this monthを$yearMonthに置き換える
   new DateInterval('P1D'),//第二引数はどのくらい間隔をあけて日付を作成するか。DateIntarval というにクラスがあるので、そちらに (P1D)1 日ごとという風に書く
-  new DateTime('first day of '. $yearMonth . ' +1 month')//第三引数は期間の終わりを指定。指定した日は含まないので「first day of next month」と書けば翌月の1日の前日（今月の末）とかける。
+  new DateTime('first day of '. $yearMonth . ' +1 month')//next monthはthis month +1 month と表記できる
 );
 
 foreach ($period as $day) {
