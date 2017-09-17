@@ -32,8 +32,8 @@ class Calendar {
     }catch(\Exception $e){//名前空間の区切り文字である \ を入れる
       $this->_thisMonth = new \DateTime('first day of this month');
     }
-    $this->$prev = $this->_createPervLink(); //処理がややこしいので別メソッドにする。
-    $this->$next = $this->_createNextLink();
+    $this->prev = $this->_createPervLink(); //処理がややこしいので別メソッドにする。
+    $this->next = $this->_createNextLink();
     $this->yearMonth = $this->_thisMonth->format('F Y');
   }
 
@@ -44,9 +44,9 @@ class Calendar {
     return $dt->modify('-1 month')->format('Y-m');
   }
   //来月分
-  private function _createPervLink(){
+  private function _createNextLink(){
     $dt = clone $this->_thisMonth;//thisMonthをprivateに書き換え
-    $next = $dt->modify('+1 month')->format('Y-m');
+    return $dt->modify('+1 month')->format('Y-m');
   }
 
   public function show(){
